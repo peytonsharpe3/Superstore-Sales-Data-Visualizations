@@ -180,3 +180,28 @@ plt.ticklabel_format(style="plain", axis="y")
 
 plt.tight_layout()
 plt.show()
+#-----Creating a horizontal bar graph showing total Sales by State -----
+
+# Total sales by state and arrange in decreasing order
+state_sales = (
+    df.groupby("State", as_index=False)["Sales"]
+      .sum()
+      .sort_values("Sales", ascending=False)
+)
+
+# Create horizontal bar graph
+plt.figure(figsize=(10, 14))
+
+sns.barplot(
+    data=state_sales,
+    x="Sales",
+    y="State"
+)
+
+plt.title("Total Sales by State", loc="center")
+plt.xlabel("Total Sales ($)")
+plt.ylabel("State")
+
+plt.ticklabel_format(style="plain", axis="x")
+plt.tight_layout()
+plt.show()
