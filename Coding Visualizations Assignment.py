@@ -12,7 +12,7 @@ df = pd.read_csv("Superstore_Sales - Superstore_Sales.csv")
 print(df.shape)
 
 
-# Creating a Line graph showing the Category Sales made by the Superstore Year on year.
+#----- Creating a Line graph showing the Category Sales made by the Superstore Year on year -----
 
 # Convert Sales to numeric
 df["Sales"] = pd.to_numeric(df["Sales"], errors="coerce")
@@ -48,7 +48,7 @@ plt.tight_layout()
 plt.show()
 
 
-# Creating a Stacked Bar Graph showing Sales split in each Category
+#----- Creating a Stacked Bar Graph showing Sales split in each Category -----
 
 # Total sales by category and subcategory
 sales = df.groupby(
@@ -103,7 +103,7 @@ plt.tight_layout()
 plt.show()
 
 
-# Creating a Histogram panel of Profit data for each Category
+#----- Creating a Histogram panel of Profit data for each Category -----
 
 # Convert Profit to numeric
 df["Profit"] = pd.to_numeric(df["Profit"], errors="coerce")
@@ -129,4 +129,25 @@ g.set_titles("{col_name}")
 g.figure.subplots_adjust(top=0.85)
 g.figure.suptitle("Distribution of Profit by Category", x=0.5)
 
+plt.show()
+
+#----- Creating a pie chart showing total Sales by Region -----
+
+# Total sales by region
+region_sales = df.groupby("Region")["Sales"].sum()
+
+# Create pie chart
+plt.figure(figsize=(8, 8))
+
+plt.pie(
+    region_sales,
+    labels=region_sales.index,
+    autopct="%1.1f%%",
+    startangle=90,
+    colors=sns.color_palette("pastel")
+)
+
+plt.title("Percentage of Total Sales by Region", loc="center")
+
+plt.tight_layout()
 plt.show()
