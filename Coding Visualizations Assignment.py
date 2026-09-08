@@ -151,3 +151,32 @@ plt.title("Percentage of Total Sales by Region", loc="center")
 
 plt.tight_layout()
 plt.show()
+
+#----- Creating a bar graph showing total Sales by Region -----
+
+# Total sales by region
+region_sales_bar = (
+    df.groupby("Region", as_index=False)["Sales"]
+      .sum()
+      .sort_values("Sales", ascending=False)
+)
+
+# Create bar graph
+plt.figure(figsize=(8, 6))
+
+sns.barplot(
+    data=region_sales_bar,
+    x="Region",
+    y="Sales",
+    hue="Region",
+    palette="pastel",
+    legend=False
+)
+
+plt.title("Total Sales by Region", loc="center")
+plt.xlabel("Region")
+plt.ylabel("Total Sales ($)")
+plt.ticklabel_format(style="plain", axis="y")
+
+plt.tight_layout()
+plt.show()
