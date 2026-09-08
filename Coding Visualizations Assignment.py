@@ -11,36 +11,50 @@ df = pd.read_csv("Superstore_Sales - Superstore_Sales.csv")
 print(df.shape)
 
 #Creating a Line graph showing the Category Sales made by the Superstore Year on year.
-# Convert Sales to numeric
-df["Sales"] = pd.to_numeric(df["Sales"], errors="coerce")
+# Total sales by category and subcategory
+sales = df.groupby(["Category", "Sub_Category"])["Sales"].sum().reset_index()
 
-# Convert Order_Date to datetime and create an Order Year variable
-df["Order_Date"] = pd.to_datetime(df["Order_Date"], errors="coerce")
-df["Order_Year"] = df["Order_Date"].dt.year
+# Sort from lowest to highest so highest sales appear on top
+sales = sales.sort_values(["Category", "Sales"])
 
-# Group the data by year and category and calculate total sales
-category_sales_year = (
-    df.groupby(["Order_Year", "Category"], as_index=False)["Sales"]
-      .sum()
+# Create pivot table
+sales_pivot = sales.pivot(
+    index="Category",
+    columns="Sub_Category",
+    values="Sales"
+).fillna(0)
+
+# Keep subcategories in sales order
+order = sales["Sub_Category"].tolist()
+sales_pivot = sales_pivot[order]
+
+# Create stacked bar graph
+sns.set_theme()
+
+ax = sales_pivot.plot(
+    kind="bar",
+    stacked=True,
+    figsize=(12, 7),
+    colormap="tab20"
 )
 
-# Create line graph
-plt.figure(figsize=(10, 6))
+# Label each stack with the correct subcategory
+for container, subcategory in zip(ax.containers, sales_pivot.columns):
+    labels = [
+        subcategory if value > 0 else ""
+        for value in container.datavalues
+    ]
+    ax.bar_label(
+        container,
+        labels=labels,
+        label_type="center",
+        fontsize=8
+    )
 
-sns.lineplot(
-    data=category_sales_year,
-    x="Order_Year",
-    y="Sales",
-    hue="Category",
-    marker="o"
-)
-
-plt.title("Superstore Category Sales Year over Year", loc="center")
-plt.xlabel("Order Year")
+plt.title("Sales Split by Category and Subcategory", loc="center")
+plt.xlabel("Category")
 plt.ylabel("Total Sales ($)")
-plt.xticks(sorted(category_sales_year["Order_Year"].dropna().unique()))
-plt.ticklabel_format(style="plain", axis="y")
-plt.legend(title="Category")
+plt.xticks(rotation=0)
+plt.legend().remove()
 plt.tight_layout()
-
 plt.show()
